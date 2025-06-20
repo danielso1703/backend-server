@@ -1,32 +1,58 @@
-const express = require('express');
-const fetch = require('node-fetch');
-const cors = require('cors');
-require('dotenv').config();
+// server.js
+import express from "express";
+import fetch from "node-fetch";
+import cors from "cors";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
+const PORT = process.env.PORT || 3000;
+
 app.use(cors());
 app.use(express.json());
 
-app.post('/api/openai', async (req, res) => {
-  const { endpoint, ...body } = req.body;
-  if (!endpoint) {
-    return res.status(400).json({ error: 'Missing endpoint in request body' });
+app.get("/", (req, res) => {
+  res.send("✅ OpenAI chat proxy is running.");
+});
+
+app.post("/api/chat", async (req, res) => {
+  const { messages, model = "gpt-4o", stream = false } = req.body;
+
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: "Invalid or missing 'messages' array." });
   }
+
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: "Missing OpenAI API key in environment." });
+  }
+
   try {
-    const response = await fetch(`https://api.openai.com/v1/${endpoint}`, {
-      method: 'POST',
+    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify({
+        model,
+        messages,
+        stream,
+      }),
     });
-    const data = await response.json();
-    res.status(response.status).json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+
+    const data = await openaiRes.json();
+
+    if (!openaiRes.ok) {
+      return res.status(openaiRes.status).json({ error: data.error?.message || "OpenAI error" });
+    }
+
+    res.json({ message: data.choices?.[0]?.message?.content });
+  } catch (err) {
+    console.error("Server error:", err);
+    res.status(500).json({ error: err.message || "Internal server error" });
   }
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 
+app.listen(PORT, () => {
+  console.log(`✅ Server listening on port ${PORT}`);
+});
