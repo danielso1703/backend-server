@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
     res.send("✅ OpenAI chat proxy is running.");
 });
 app.post("/api/chat", async (req, res) => {
-    const { messages, model = "gpt-4o", stream = false } = req.body;
+    const { messages, model = "gpt-4o-mini", stream = false } = req.body;
   
     if (!messages || !Array.isArray(messages)) {
       return res.status(400).json({ error: "Invalid or missing 'messages' array." });
