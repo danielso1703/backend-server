@@ -358,7 +358,7 @@ CREATE INDEX idx_sessions_expires_at ON sessions(expires_at);
 ### Required Environment Variables
 ```env
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/ai_calendar_db
+DATABASE_URL=postgresql://ai_calendar_user:[REDACTED]@dpg-d2dqqdodl3ps73b66ai0-a.oregon-postgres.render.com/ai_calendar_db
 
 # JWT
 JWT_SECRET=your_jwt_secret_key_here
@@ -366,20 +366,20 @@ JWT_EXPIRES_IN=7d
 JWT_REFRESH_EXPIRES_IN=30d
 
 # Google OAuth
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT_URI=https://your-domain.com/auth/google/callback
+GOOGLE_CLIENT_ID=390777179127-1kjfoqh7uqire9g81v8c6a7shph7a90a.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+GOOGLE_REDIRECT_URI=https://backend-server-3pxb.onrender.com/auth/google/callback
 
 # Stripe
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
-STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
+STRIPE_SECRET_KEY=[REDACTED]
+STRIPE_PUBLISHABLE_KEY=pk_live_51RhXUeKYPm0REgIdZlsOVi5R4jrfM185BYAMAJBN3VT63hTslLsv6fAGjfEWCAlIcB7ejStR58fOWC7Ij2oQG9dp00kQkMm7Pr
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
-STRIPE_PRICE_ID=price_your_premium_price_id
+STRIPE_PRICE_ID=price_1RvQOqKYPm0REgId2awooMFO
 
 # Server
 PORT=3000
 NODE_ENV=production
-CORS_ORIGIN=https://your-extension-id.chromiumapp.org
+CORS_ORIGIN=https://jelmebbplokkmdfjbfagadjakiplggnc.chromiumapp.org
 
 # Redis (for session storage - optional)
 REDIS_URL=redis://localhost:6379

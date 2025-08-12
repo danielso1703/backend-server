@@ -97,6 +97,21 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// Stricter rate limiting for authentication endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // limit each IP to 5 auth attempts per windowMs
+  message: {
+    error: {
+      code: 'RATE_LIMIT_EXCEEDED',
+      message: 'Too many authentication attempts',
+      timestamp: new Date().toISOString()
+    }
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
@@ -137,7 +152,7 @@ app.get("/health", async (req, res) => {
 });
 
 // API Routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/usage', usageRoutes);
 app.use('/api/webhooks', webhookRoutes);
