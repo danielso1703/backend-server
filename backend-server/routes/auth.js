@@ -7,29 +7,64 @@ import asyncHandler from 'express-async-handler';
 const router = express.Router();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// Google OAuth Sign-in
-router.post('/google-signin', asyncHandler(async (req, res) => {
-  const { idToken, accessToken } = req.body;
+// Verify Google access token with Google's API
+async function verifyGoogleAccessToken(accessToken) {
+  try {
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`);
+    
+    if (!response.ok) {
+      throw new Error('Invalid access token');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    throw new Error('Failed to verify access token');
+  }
+}
 
-  if (!idToken) {
+// Google OAuth Sign-in (Updated for Chrome Extension)
+router.post('/google-signin', asyncHandler(async (req, res) => {
+  const { accessToken, userInfo } = req.body;
+
+  // Validate required fields
+  if (!accessToken || !userInfo) {
     return res.status(400).json({
       error: {
         code: 'VALIDATION_ERROR',
-        message: 'Google ID token is required',
+        message: 'Access token and user info are required',
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+
+  // Validate userInfo structure
+  if (!userInfo.email || !userInfo.id) {
+    return res.status(400).json({
+      error: {
+        code: 'VALIDATION_ERROR',
+        message: 'User info must include email and id',
         timestamp: new Date().toISOString()
       }
     });
   }
 
   try {
-    // Verify Google ID token
-    const ticket = await googleClient.verifyIdToken({
-      idToken,
-      audience: process.env.GOOGLE_CLIENT_ID
-    });
+    // Verify the access token with Google
+    const tokenData = await verifyGoogleAccessToken(accessToken);
+    
+    // Verify user info matches token data
+    if (tokenData.user_id !== userInfo.id) {
+      return res.status(401).json({
+        error: {
+          code: 'AUTH_FAILED',
+          message: 'User info mismatch',
+          timestamp: new Date().toISOString()
+        }
+      });
+    }
 
-    const payload = ticket.getPayload();
-    const { sub: googleId, email, name, picture } = payload;
+    const googleId = tokenData.user_id;
+    const { email, name, picture } = userInfo;
 
     // Check if user exists
     let result = await query(
@@ -97,13 +132,14 @@ router.post('/google-signin', asyncHandler(async (req, res) => {
     const token = generateToken(user.id);
 
     res.json({
+      token,
       user: {
         id: user.id,
         email: user.email,
-        displayName: user.display_name,
-        planType: subscription.plan_type
+        name: user.display_name,
+        picture: user.avatar_url,
+        googleId: user.google_id
       },
-      token,
       subscription: {
         status: subscription.status,
         questionsUsed: subscription.questions_used || 0,
@@ -115,8 +151,8 @@ router.post('/google-signin', asyncHandler(async (req, res) => {
     console.error('Google OAuth error:', error);
     res.status(401).json({
       error: {
-        code: 'GOOGLE_AUTH_FAILED',
-        message: 'Google authentication failed',
+        code: 'AUTH_FAILED',
+        message: error.message || 'Google authentication failed',
         timestamp: new Date().toISOString()
       }
     });
