@@ -358,10 +358,10 @@ CREATE INDEX idx_sessions_expires_at ON sessions(expires_at);
 ### Required Environment Variables
 ```env
 # Database
-DATABASE_URL=postgresql://ai_calendar_user:[REDACTED]@dpg-d2dqqdodl3ps73b66ai0-a.oregon-postgres.render.com/ai_calendar_db
+DATABASE_URL=REPLACE_WITH_YOUR_DATABASE_URL
 
 # JWT
-JWT_SECRET=your_jwt_secret_key_here
+JWT_SECRET=REPLACE_WITH_YOUR_JWT_SECRET
 JWT_EXPIRES_IN=7d
 JWT_REFRESH_EXPIRES_IN=30d
 

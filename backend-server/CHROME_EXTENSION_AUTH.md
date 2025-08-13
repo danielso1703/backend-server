@@ -55,7 +55,7 @@ chrome.identity.getAuthToken({ interactive: true }, function(token) {
 **Request Format:**
 ```json
 {
-  "accessToken": "ya29.a0AfH6SMC...",
+  "accessToken": "REPLACE_WITH_ACTUAL_ACCESS_TOKEN",
   "userInfo": {
     "email": "user@example.com",
     "name": "User Name",

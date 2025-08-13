@@ -77,7 +77,7 @@ npm run test:auth
 ```json
 POST /api/auth/google-signin
 {
-  "accessToken": "ya29.a0AfH6SMC...",
+  "accessToken": "REPLACE_WITH_ACTUAL_ACCESS_TOKEN",
   "userInfo": {
     "email": "user@example.com",
     "name": "User Name",
