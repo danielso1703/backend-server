@@ -79,7 +79,7 @@ const testAuthEndpoints = async () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        accessToken: 'ya29.a0AfH6SMC...',
+        accessToken: 'REPLACE_WITH_ACTUAL_ACCESS_TOKEN',
         userInfo: {
           email: 'test@example.com',
           name: 'Test User',
