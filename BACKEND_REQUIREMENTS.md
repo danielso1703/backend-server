@@ -368,13 +368,13 @@ JWT_REFRESH_EXPIRES_IN=30d
 # Google OAuth
 GOOGLE_CLIENT_ID=your_google_client_id_here
 GOOGLE_CLIENT_SECRET=your_google_client_secret_here
-GOOGLE_REDIRECT_URI=https://backend-server-3pxb.onrender.com/auth/google/callback
+GOOGLE_REDIRECT_URI=https://your-domain.com/auth/google/callback
 
 # Stripe
 STRIPE_SECRET_KEY=your_stripe_secret_key_here
 STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key_here
-STRIPE_WEBHOOK_SECRET=whsec_1sqStqJ5EmqHzO4upIM4Lv1rLtX6EG1h
-STRIPE_PRICE_ID=price_1RvQOqKYPm0REgId2awooMFO
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret_here
+STRIPE_PRICE_ID=price_your_premium_price_id_here
 
 # Server
 PORT=3000
